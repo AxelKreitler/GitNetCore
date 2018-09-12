@@ -5,7 +5,7 @@ using AspNetCoreTodo.Models;
 
 namespace AspNetCoreTodo.Services
 {
-    public class FakeTodoItemService : ITodoItemService
+    /*public class FakeTodoItemService : ITodoItemService
     {
         public Task<TodoItem[]> GetIncompleteItemsAsync()
         {
@@ -23,5 +23,5 @@ namespace AspNetCoreTodo.Services
             
             return Task.FromResult(new[] { item1, item2 });
         }
-    }
+    }*/
 }
