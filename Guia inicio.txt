@@ -1,0 +1,5 @@
+ubicarse en la carpeta del proyecto
+
+usar dotnet restore
+usar dotnet compile
+usar dotnet run / test
