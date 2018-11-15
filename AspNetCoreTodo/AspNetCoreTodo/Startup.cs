@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using AspNetCoreTodo.Services;
 using AspNetCoreTodo.Models;
+using Pomelo.EntityFrameworkCore.MySql;
 
 namespace AspNetCoreTodo
 {
@@ -36,9 +37,11 @@ namespace AspNetCoreTodo
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<ApplicationDbContext>(options =>options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            //Conexion vieja de Sqlite, la actualize por la de continuacion (mysql)
+            //use dotnet add package pomelo.entityframeworkcore.mysql y despues lo agregue al using (y uso una base creada en mysql llamada aspnetcoretodo)
+
+            services.AddDbContext<ApplicationDbContext>(options =>options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             
             //services.AddDefaultIdentity<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>();
             //services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
