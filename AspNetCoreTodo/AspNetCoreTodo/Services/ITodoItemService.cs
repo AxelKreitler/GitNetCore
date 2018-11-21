@@ -12,5 +12,7 @@ namespace AspNetCoreTodo.Services
          Task<bool> AddItemAsync(TodoItem newItem, ApplicationUser currentUser);
 
          Task<bool> MarkDoneAsync(Guid id, ApplicationUser currentUser);
+
+         Task<TodoItem[]> Search(string searchString,ApplicationUser currentUser);
     }
 }

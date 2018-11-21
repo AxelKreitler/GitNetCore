@@ -15,18 +15,38 @@ namespace AspNetCoreTodo.Controllers
     {
         private readonly ITodoItemService _todoItemService;
         private readonly UserManager<ApplicationUser> _userManager;
+
         public TodoController(ITodoItemService todoItemService, UserManager<ApplicationUser> userManager)
         {
             _todoItemService = todoItemService;
             _userManager = userManager;
         }
-        public async Task<IActionResult> Index()
+/*        public async Task<IActionResult> Index()
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null) return Challenge();
 
             var items = await _todoItemService.GetIncompleteItemsAsync(currentUser);
             
+            var model = new TodoViewModel()
+            {
+                Items = items
+            };
+
+            return View(model);
+        }
+*/
+        public async Task<IActionResult> Index(string searchString)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null) return Challenge();
+
+            var items = await _todoItemService.GetIncompleteItemsAsync(currentUser);
+
+            if(searchString != null){
+                items = await _todoItemService.Search(searchString, currentUser);
+            }
+
             var model = new TodoViewModel()
             {
                 Items = items
@@ -75,6 +95,5 @@ namespace AspNetCoreTodo.Controllers
             
             return RedirectToAction("Index");
         }
-
     }
 }

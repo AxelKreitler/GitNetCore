@@ -6,7 +6,14 @@ ViewData["Title"] = "Manage your todo list";
 }
 
 <div class="panel panel-default todo-panel">
-    <div class="panel-heading">@ViewData["Title"]</div>
+    <div class="panel-heading">@ViewData["Title"]
+        
+        <form asp-controller="Todo" asp-action="Index">
+        Title: <input type="text" name="SearchString" >
+        <input type="submit" value="Filter" />
+        </form>
+
+    </div>
     <table class="table table-hover">
         <thead>
             <tr>

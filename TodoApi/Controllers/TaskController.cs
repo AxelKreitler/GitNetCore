@@ -7,11 +7,11 @@ namespace TodoApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TodoController : ControllerBase
+    public class TaskController : ControllerBase
     {
-        private readonly TodoContext _context;
+        private readonly TaskContext _context;
 
-        public TodoController(TodoContext context)
+        public TaskController(TaskContext context)
         {
             _context = context;
 
@@ -19,19 +19,19 @@ namespace TodoApi.Controllers
             {
                 // Create a new TodoItem if collection is empty,
                 // which means you can't delete all TodoItems.
-                _context.TodoItems.Add(new TodoItem { Name = "Item1" });
+                _context.TodoItems.Add(new TaskItem { Name = "Item1" });
                 _context.SaveChanges();
             }
         }
 
         [HttpGet]
-        public ActionResult<List<TodoItem>> GetAll()
+        public ActionResult<List<TaskItem>> GetAll()
         {
             return _context.TodoItems.ToList();
         }
 
-        [HttpGet("{id}", Name = "GetTodo")]
-        public ActionResult<TodoItem> GetById(long id)
+        [HttpGet("{id}", Name = "GetTask")]
+        public ActionResult<TaskItem> GetById(long id)
         {
             var item = _context.TodoItems.Find(id);
             if (item == null)
@@ -42,27 +42,36 @@ namespace TodoApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(TodoItem item)
+        public IActionResult Create(TaskItem item)
         {
+            if(item.Status != TaskStatus.Todo)
+            {
+                return BadRequest("No se puede inicializar una tarea con un estado "+item.Status);
+            }
             _context.TodoItems.Add(item);
             _context.SaveChanges();
 
-            return CreatedAtRoute("GetTodo", new { id = item.Id }, item);
+            return CreatedAtRoute("GetTask", new { id = item.Id }, item);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, TodoItem item)
+        public IActionResult Update(long id, TaskItem item)
         {
-            var todo = _context.TodoItems.Find(id);
-            if (todo == null)
+            var task = _context.TodoItems.Find(id);
+            if (task == null)
             {
                 return NotFound();
             }
 
-            todo.IsComplete = item.IsComplete;
-            todo.Name = item.Name;
+            if(task.Status == TaskStatus.Canceled && item.Status == TaskStatus.Done)
+            {
+                return BadRequest("No se puede actualizar una tarea cancelada a finalizada");
+            }
 
-            _context.TodoItems.Update(todo);
+            task.Status = item.Status;
+            task.Name = item.Name;
+
+            _context.TodoItems.Update(task);
             _context.SaveChanges();
             return NoContent();
         }

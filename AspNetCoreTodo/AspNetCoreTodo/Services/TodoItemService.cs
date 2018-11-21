@@ -50,5 +50,12 @@ namespace AspNetCoreTodo.Services
             var saveResult = await _context.SaveChangesAsync();
             return saveResult == 1; // One entity should have been updated
         }
+
+        public async Task<TodoItem[]> Search(string searchString, ApplicationUser user)
+        {
+            return await _context.Items
+                .Where(x => x.Title.Contains(searchString) && x.UserId == user.Id)
+                .ToArrayAsync();
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace TodoApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
+            services.AddDbContext<TaskContext>(opt => opt.UseInMemoryDatabase("TaskList"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -39,7 +39,7 @@ namespace TodoApi
                 c.SwaggerDoc("v1", new Info
                 {
                     Version = "v1",
-                    Title = "ToDo API",
+                    Title = "Task API",
                     Description = "A simple example ASP.NET Core Web API",
                     TermsOfService = "None",
                     Contact = new Contact

@@ -3,3 +3,5 @@ ubicarse en la carpeta del proyecto
 usar dotnet restore
 usar dotnet compile
 usar dotnet run / test
+
+dotnet ef database update - para agregar todos los datos de migracion a la base de datos mysql (nombre: aspnetcoretodo)
