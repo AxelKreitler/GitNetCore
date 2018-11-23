@@ -11,7 +11,7 @@ namespace AspNetCoreTodo.UnitTests
     public class UnitTest1
     {
         [Fact]
-        public void Test1()
+        public async void Test1()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(databaseName: "Test_AddNewItem").Options;
 
@@ -43,7 +43,27 @@ namespace AspNetCoreTodo.UnitTests
                 
                 // Item should be due 3 days from now (give or take a second)
                 var difference = DateTimeOffset.Now.AddDays(3) - item.DueAt;
-                Assert.True(difference < TimeSpan.FromSeconds(1));
+                Assert.True(difference > TimeSpan.FromSeconds(1));
+            }
+
+        }
+
+        public async void FilterTitleWithOwner(){
+
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>().UseInMemoryDatabase(databaseName: "Test_AddNewItem").Options;
+
+            using (var context = new ApplicationDbContext(options))
+            {
+                var service = new TodoItemService(context);
+
+                var creatorUser = new ApplicationUser
+                {
+                    Id = "fake-000",
+                    UserName = "fake@example.com"
+                };
+
+                var busqueda = await service.Search("Test",creatorUser);
+                Assert.True(busqueda.Length > 0);
             }
 
         }
