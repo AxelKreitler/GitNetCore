@@ -1,0 +1,37 @@
+@model PostViewModel
+
+@{
+ViewData["Title"] = "Post section";
+}
+
+<div class="panel panel-default post-panel">
+    <div class="panel-heading">@ViewData["Title"]
+        
+        <form asp-controller="Post" asp-action="Index">
+        Title: <input type="text" name="SearchString" >
+        <input type="submit" value="Filter" />
+        </form>
+
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <td>Titulo</td>
+                <td>Descripcion</td>
+            </tr>
+        </thead>
+        @foreach (var post in Model.Posts)
+        {
+            <tr>
+                <td>@post.Title</td>
+                <td>@post.Description</td>
+                <td><img src="@post.FilePath"></td>
+            </tr>
+        }
+    </table>
+
+    <div class="panel-footer add-item-form">
+        @await Html.PartialAsync("AddPostPartial", new PostItem())
+    </div>
+</div>
