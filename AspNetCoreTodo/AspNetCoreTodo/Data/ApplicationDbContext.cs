@@ -15,6 +15,6 @@ namespace AspNetCoreTodo.Data
         }
 
         public DbSet<TodoItem> Items { get; set; }
-
+        public DbSet<PostItem> Posts { get; set; }
     }
 }

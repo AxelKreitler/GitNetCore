@@ -1,0 +1,9 @@
+@model PostItem
+
+<form asp-action="AddPost" method="POST" enctype="multipart/form-data">
+    <label asp-for="Title">Add a new post:</label>
+    <input asp-for="Title">
+    <input asp-for="Description">
+    <input asp-for="files" id="files" type="file">
+    <button type="submit">Add</button>
+</form>

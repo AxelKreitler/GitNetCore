@@ -13,6 +13,8 @@ namespace AspNetCoreTodo.Models
 
         public string FilePath { get; set; }
 
+        public byte[] files { get; set; }
+
         public DateTimeOffset? TimeOfCreation { get; set; }
 
         public string UserId { get; set; }

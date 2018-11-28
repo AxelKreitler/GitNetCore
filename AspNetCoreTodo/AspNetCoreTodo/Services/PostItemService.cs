@@ -25,8 +25,8 @@ namespace AspNetCoreTodo.Services
         public async Task<bool> AddPostAsync(PostItem newPost, ApplicationUser user)
         {
             newPost.Id = Guid.NewGuid();
-            newPost.DueAt = TimeOfCreation.Now;
             newPost.UserId = user.Id;
+            newPost.TimeOfCreation = DateTimeOffset.Now;
 
             _context.Posts.Add(newPost);
             
@@ -36,7 +36,7 @@ namespace AspNetCoreTodo.Services
 
         public async Task<PostItem[]> Search(string searchString)
         {
-            return await _context.Items
+            return await _context.Posts
                 .Where(x => x.Title.Contains(searchString))
                 .ToArrayAsync();
         }

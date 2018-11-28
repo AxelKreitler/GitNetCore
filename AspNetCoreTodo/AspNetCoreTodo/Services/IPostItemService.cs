@@ -5,7 +5,7 @@ using AspNetCoreTodo.Models;
 
 namespace AspNetCoreTodo.Services
 {
-    public class IPostItemService
+    public interface IPostItemService
     {
          Task<PostItem[]> GetCompletePostsAsync();
          

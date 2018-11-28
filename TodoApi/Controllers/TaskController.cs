@@ -1,77 +1,91 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using TodoApi.Models;
+using TaskApi.DTO;
+using TaskApi.Extensions;
+using TaskApi.Models;
+using TodoApi.DTO;
 
-namespace TodoApi.Controllers
+namespace TaskApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class TaskController : ControllerBase
     {
         private readonly TaskContext _context;
+        private readonly IMapper _mapper;
 
-        public TaskController(TaskContext context)
+
+        public TaskController(TaskContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper; //injected automapper
 
-            if (_context.TodoItems.Count() == 0)
+            if (_context.TaskItems.Count() == 0)
             {
                 // Create a new TodoItem if collection is empty,
                 // which means you can't delete all TodoItems.
-                _context.TodoItems.Add(new TaskItem { Name = "Item1" });
+                _context.TaskItems.Add(new TaskItem { Name = "Item1" });
                 _context.SaveChanges();
             }
         }
 
         [HttpGet]
-        public ActionResult<List<TaskItem>> GetAll()
+        public ActionResult<List<TaskDTO>> GetAll()
         {
-            return _context.TodoItems.ToList();
+            return _mapper.Map<List<TaskDTO>>(_context.TaskItems.ToList());
         }
 
         [HttpGet("{id}", Name = "GetTask")]
-        public ActionResult<TaskItem> GetById(long id)
+        public ActionResult<TaskDTO> GetById(long id)
         {
-            var item = _context.TodoItems.Find(id);
+            var item = _context.TaskItems.Find(id);
             if (item == null)
             {
                 return NotFound();
             }
-            return item;
+            return _mapper.Map<TaskDTO>(item);
         }
 
         [HttpPost]
-        public IActionResult Create(TaskItem item)
+        public IActionResult Create(CreateTaskDTO taskDTO)
         {
-            if(item.Status != TaskStatus.Todo)
-            {
-                return BadRequest("No se puede inicializar una tarea con un estado "+item.Status);
-            }
-            _context.TodoItems.Add(item);
+            TaskItem task = _mapper.Map<TaskItem>(taskDTO);//usabamos new TaskItem(){Name = taskDTO.Name};
+
+            _context.TaskItems.Add(task);
             _context.SaveChanges();
 
-            return CreatedAtRoute("GetTask", new { id = item.Id }, item);
+            return CreatedAtRoute("GetTask", new { id = task.Id }, task);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, TaskItem item)
+        public IActionResult Update(long id, UpdateTaskDTO item)
         {
-            var task = _context.TodoItems.Find(id);
+            TaskItem updatedTask = _mapper.Map<TaskItem>(item);
+
+            var task = _context.TaskItems.Find(id);
             if (task == null)
             {
                 return NotFound();
             }
 
-            if(task.Status == TaskStatus.Canceled && item.Status == TaskStatus.Done)
+            //If the task is in a final status, cannot be updated
+            if(task.Status.isFinalStatus())
             {
-                return BadRequest("No se puede actualizar una tarea cancelada a finalizada");
+                return BadRequest("La tarea se encuentra en un estado final, no puede ser modificada");
             }
 
-            task.Status = item.Status;
-            task.Name = item.Name;
+            /*if(task.Status == TaskStatus.Canceled && updatedTask.Status == TaskStatus.Done)
+            {
+                return BadRequest("No se puede actualizar una tarea cancelada a finalizada");
+            }*/
 
-            _context.TodoItems.Update(task);
+            task.Status = updatedTask.Status;
+            task.Name = updatedTask.Name;
+
+            _context.TaskItems.Update(task);
             _context.SaveChanges();
             return NoContent();
         }
@@ -79,13 +93,13 @@ namespace TodoApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)
         {
-            var todo = _context.TodoItems.Find(id);
+            var todo = _context.TaskItems.Find(id);
             if (todo == null)
             {
                 return NotFound();
             }
 
-            _context.TodoItems.Remove(todo);
+            _context.TaskItems.Remove(todo);
             _context.SaveChanges();
             return NoContent();
         }
